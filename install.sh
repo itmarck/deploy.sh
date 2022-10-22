@@ -8,6 +8,7 @@ fi
 
 folder=/usr/local/bin
 
+mkdir -p $folder/deploy;
 cp deploy.sh $folder/deploy/ -r;
 mv $folder/deploy/deploy.sh $folder/deploy/deploy;
 chmod u+x $folder/deploy/deploy;
