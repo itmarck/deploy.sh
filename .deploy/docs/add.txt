@@ -1,0 +1,6 @@
+Usage: deploy add [repository_name] [options...]
+
+options
+  -f, --file                 Deployment filename (default: deploy.sh)
+  -v, --verbose              Print verbose output
+  -h, --help                 Show help information for any command

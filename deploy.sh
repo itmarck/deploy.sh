@@ -5,7 +5,7 @@ ARGUMENT=""
 HELP=false
 VERBOSE=false
 DEPLOY_FILE="deploy.sh"
-STORAGE_FILE=".repositories"
+STORAGE_FILE=".deploy/database/.repositories"
 
 function initialize() {
   local positional_arguments=()
@@ -78,30 +78,18 @@ function deploy_repository() {
   echo "Deploying repository $ARGUMENT"
 }
 
-function display_global_help() {
-  echo "Usage: deploy [command...] [options...]"
-  echo
-  echo "command is one of"
-  echo "  start, stop, restart, status"
-  echo
-  echo "Options:"
-  echo "  -f, --file                 Deployment filename (default: deploy.sh)"
-  echo "  -v, --verbose              Print verbose output"
-  echo "  -h, --help                 Show help information for any command"
-}
-
-function display_add_help() {
-  echo "Usage: deploy add [options...] [repository]"
-  echo
-  echo "Options:"
-  echo "  -h, --help                 Show this help"
-}
-
 function unknown_command() {
   echo "Unknown command: $ACTION"
   echo
-  display_global_help
+  display_help "help"
   exit 1
+}
+
+function display_help() {
+  if [ -f .deploy/docs/$1.txt ]; then
+    cat .deploy/docs/$1.txt
+    exit 1
+  fi
 }
 
 function validate() {
@@ -167,7 +155,7 @@ function main() {
     deploy_repository
     ;;
   "")
-    display_global_help
+    display_help "help"
     ;;
   *)
     unknown_command

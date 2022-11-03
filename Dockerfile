@@ -2,11 +2,10 @@ FROM ubuntu:20.04
 
 WORKDIR /app
 
-COPY . .
+# Update and install curl
+RUN apt-get update && apt-get install -y curl
 
-RUN apt-get update && apt-get install -y vim
-RUN apt-get install -y curl
-
-RUN bash install.sh
+# Run the install script from github
+RUN curl https://raw.githubusercontent.com/itmarck/deploy.sh/main/install.sh | bash
 
 ENTRYPOINT ["/bin/bash"]
