@@ -129,7 +129,9 @@ function remove_repository() {
 }
 
 function deploy_repository() {
-  file=$(repository_from_name)/$DEPLOY_FILE
+  folder=$(repository_from_name)
+  file=$folder/$DEPLOY_FILE
+
   echo "Deploy file: $file"
 
   if [ ! -f "$file" ]; then
@@ -142,6 +144,7 @@ function deploy_repository() {
     echo "$DEPLOY_FILE set as executable"
   fi
 
+  cd "$folder"
   $file
   echo "$DEPLOY_FILE executed successfully"
 }
