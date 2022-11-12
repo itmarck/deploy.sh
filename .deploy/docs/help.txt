@@ -1,11 +1,12 @@
 Usage: deploy [OPTION]... [REPOSITORY]...
 
-Run a deployment file from a local repository.
+Run a deployment file from a local repository. If no repository is
+specified, the command will show a list of available repositories.
 
-  -a, --add                  Add a new repository to deploy
+  -a, --add                  Add REPOSITORY to the list
   -c, --clean                Clean all repositories
-  -f, --file                 Deployment filename (default: deploy.sh)
-  -r, --remove               Remove a repository from name
+  -f, --file                 Specify the deployment filename (default: deploy.sh)
+  -r, --remove               Remove the REPOSITORY
   -v, --verbose              Print verbose output
-      --help                 Show help information for any command
-      --version              Show version information for any command
+      --help                 Show this help information
+      --version              Show command version

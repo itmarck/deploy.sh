@@ -1,3 +1,8 @@
+## 0.1.2 (Nov 12, 2022)
+
+- Move into deployment folder before executing
+- Update help documentation
+
 ## 0.1.1 (Nov 12, 2022)
 
 - Execute deployment file
