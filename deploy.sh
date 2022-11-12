@@ -95,7 +95,7 @@ function list_repositories() {
 
   while read -r line; do
     if [ "$VERBOSE" = true ]; then
-      echo "$line"
+      echo "${line##*/} → $line"
     else
       echo "${line##*/}"
     fi
@@ -139,6 +139,18 @@ function display_document() {
   fi
 }
 
+function repository_from_name() {
+  local i=0
+  while read -r line; do
+    if [ "${REPOSITORY##*/}" = "${line##*/}" ]; then
+      echo "$line"
+      return
+    fi
+    i=$((i + 1))
+  done <"$WORKSPACE_STORAGE"
+  echo ""
+}
+
 function validate() {
   if [ ! -f "$WORKSPACE_STORAGE" ]; then
     touch "$WORKSPACE_STORAGE"
@@ -161,15 +173,15 @@ function validate() {
       shift
       ;;
     --repository)
-      if ! grep -q "$REPOSITORY" "$WORKSPACE_STORAGE"; then
+      if [ -z "$(repository_from_name)" ]; then
         echo "Repository \"$REPOSITORY\" not found"
         exit 1
       fi
       shift
       ;;
     --no-repository)
-      if grep -q "$REPOSITORY" "$WORKSPACE_STORAGE"; then
-        echo "Repository already exists"
+      if [ -n "$(repository_from_name)" ]; then
+        echo "Repository name already exists"
         exit 1
       fi
       shift
