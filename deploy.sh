@@ -129,7 +129,21 @@ function remove_repository() {
 }
 
 function deploy_repository() {
-  echo "Deploying repository $REPOSITORY"
+  file=$(repository_from_name)/$DEPLOY_FILE
+  echo "Deploy file: $file"
+
+  if [ ! -f "$file" ]; then
+    echo "$file not found"
+    exit 1
+  fi
+
+  if [ ! -x "$file" ]; then
+    chmod u+x "$file"
+    echo "$DEPLOY_FILE set as executable"
+  fi
+
+  $file
+  echo "$DEPLOY_FILE executed successfully"
 }
 
 function display_document() {
