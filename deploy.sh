@@ -23,6 +23,10 @@ function initialize() {
 
   while [[ $# -gt 0 ]]; do
     case $1 in
+    -c | --clean)
+      ACTION="clean"
+      shift
+      ;;
     -a | --add)
       if [ -z "$ACTION" ]; then
         ACTION="add"
@@ -83,23 +87,31 @@ function initialize() {
   readonly WORKSPACE_DOCS
 }
 
-function print_repositories() {
+function list_repositories() {
   if [[ ! -s $WORKSPACE_STORAGE ]]; then
     echo "No repositories found"
-    return
+    exit 0
   fi
 
   while read -r line; do
     if [ "$VERBOSE" = true ]; then
-      echo "$line"
+      echo "${line##*/} → $line"
     else
       echo "${line##*/}"
     fi
   done <"$WORKSPACE_STORAGE"
 }
 
-function list_repositories() {
-  print_repositories
+function clean_repositories() {
+  read -p "Are you sure you want to clean all repositories? [y/N] "
+  if [[ $REPLY =~ ^[Yy]$ ]]; then
+    >$WORKSPACE_STORAGE
+    echo "All repositories cleaned"
+    exit 0
+  else
+    echo "Abort"
+    exit 1
+  fi
 }
 
 function add_repository() {
@@ -117,19 +129,40 @@ function remove_repository() {
 }
 
 function deploy_repository() {
-  echo "Deploying repository $REPOSITORY"
-}
+  file=$(repository_from_name)/$DEPLOY_FILE
+  echo "Deploy file: $file"
 
-function unknown_command() {
-  echo "Unknown command: $REPOSITORY"
-  exit 1
-}
-
-function display_help() {
-  if [ -f "$WORKSPACE_DOCS/$1.txt" ]; then
-    cat "$WORKSPACE_DOCS/$1.txt"
+  if [ ! -f "$file" ]; then
+    echo "$file not found"
     exit 1
   fi
+
+  if [ ! -x "$file" ]; then
+    chmod u+x "$file"
+    echo "$DEPLOY_FILE set as executable"
+  fi
+
+  $file
+  echo "$DEPLOY_FILE executed successfully"
+}
+
+function display_document() {
+  if [ -f "$WORKSPACE_DOCS/$1.txt" ]; then
+    cat "$WORKSPACE_DOCS/$1.txt"
+    exit 0
+  fi
+}
+
+function repository_from_name() {
+  local i=0
+  while read -r line; do
+    if [ "${REPOSITORY##*/}" = "${line##*/}" ]; then
+      echo "$line"
+      return
+    fi
+    i=$((i + 1))
+  done <"$WORKSPACE_STORAGE"
+  echo ""
 }
 
 function validate() {
@@ -154,15 +187,15 @@ function validate() {
       shift
       ;;
     --repository)
-      if ! grep -q "$REPOSITORY" "$WORKSPACE_STORAGE"; then
+      if [ -z "$(repository_from_name)" ]; then
         echo "Repository \"$REPOSITORY\" not found"
         exit 1
       fi
       shift
       ;;
     --no-repository)
-      if grep -q "$REPOSITORY" "$WORKSPACE_STORAGE"; then
-        echo "Repository already exists"
+      if [ -n "$(repository_from_name)" ]; then
+        echo "Repository name already exists"
         exit 1
       fi
       shift
@@ -194,11 +227,15 @@ function main() {
     validate --argument --repository
     remove_repository
     ;;
+  "clean")
+    validate
+    clean_repositories
+    ;;
   "help")
-    display_help "help"
+    display_document "help"
     ;;
   "version")
-    display_help "version"
+    display_document "version"
     ;;
   esac
 }

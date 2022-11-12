@@ -1,3 +1,10 @@
+## 0.1.1 (Nov 12, 2022)
+
+- Execute deployment file
+- Add `--clean` option
+- Repository name validation
+- Remove workdir in docker file
+
 ## 0.1.0 (Nov 06, 2022)
 
 - Initial version
