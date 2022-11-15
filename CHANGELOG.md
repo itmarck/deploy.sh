@@ -1,3 +1,8 @@
+## 1.0.0 (Nov 15, 2022)
+
+- Release 1.0.0
+- Explain the usage in the README
+
 ## 0.1.2 (Nov 12, 2022)
 
 - Move into deployment folder before executing
